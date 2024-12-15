@@ -143,7 +143,7 @@ void UpdateActorState(TActor *actor, int ticks)
 		actor->petrified = MAX(0, actor->petrified - ticks);
 		actor->confused = MAX(0, actor->confused - ticks);
 
-		// Reset accumulated damage if FPS_FRAMELIMIT passed since taking damage.
+		// Reset accumulated damage if FPS_FRAMELIMIT passed since taking damage
 		actor->damageCooldownTicks += ticks;
 		if (actor->accumulatedDamage)
 		{

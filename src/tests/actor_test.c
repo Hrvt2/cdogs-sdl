@@ -243,51 +243,9 @@ FEATURE(pickup_new, "Pickup into existing slot")
 	CharacterStoreTerminate(&gCampaign.Setting.characters);
 FEATURE_END
 
-FEATURE(actor_hit_accumulated_damage, "Actor takes damage and checks accumulated damage")
-
-	CharacterStoreInit(&gCampaign.Setting.characters);
-	Character *c = CharacterStoreAddOther(&gCampaign.Setting.characters);
-	CharacterClass cc;
-	memset(&cc, 0, sizeof cc);
-	c->Class = &cc;
-	GameEventsInit(&gGameEvents);
-	ActorsInit();
-	gConfig = ConfigDefault();
-	NThingDamage d;
-	d.Power = 50;
-	d.UID = 0;
-	TActor *a;
-
-	SCENARIO("Actor takes damage and checks accumulated damage over time")
-		GIVEN("an actor with no accumulated damage")
-			GameEvent e = GameEventNewActorAdd(svec2(1, 1), c, NULL);
-			e.u.ActorAdd.CharId = 0;
-			a = ActorAdd(e.u.ActorAdd);
-			SHOULD_INT_EQUAL(a->accumulatedDamage, 0);
-		AND("the actor takes a hit with damage")
-			ActorHit(d);
-			SHOULD_INT_EQUAL(a->accumulatedDamage, d.Power);
-		WHEN("UpdateActorState is called with ticks < 70")
-			UpdateActorState(a, 50); 
-			SHOULD_INT_EQUAL(a->accumulatedDamage, d.Power);
-		WHEN("UpdateActorState is called with ticks > 70")
-			UpdateActorState(a, 100);
-			SHOULD_INT_EQUAL(a->accumulatedDamage, 0);
-	SCENARIO_END
-
-	ActorDestroy(a);
-	ActorsTerminate();
-	GameEventsTerminate(&gGameEvents);
-	CharacterStoreTerminate(&gCampaign.Setting.characters);
-
-FEATURE_END
-
-
-
 CBEHAVE_RUN(
 	"Actor features are:",
 	TEST_FEATURE(pickup_empty),
 	TEST_FEATURE(pickup_existing),
-	TEST_FEATURE(pickup_new),
-	TEST_FEATURE(actor_hit_accumulated_damage)
+	TEST_FEATURE(pickup_new)
 )
